@@ -1,0 +1,5 @@
+{"properties": [{
+  "name": "cloud.product.synchronizer.url",
+  "type": "java.lang.String",
+  "description": "The URL where you can access cloud-product-synchronizer api"
+}]}
