@@ -3,6 +3,7 @@ package ro.linic.cloud.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import ro.linic.cloud.command.ChangeNameCommand;
 import ro.linic.cloud.command.ChangePriceCommand;
 import ro.linic.cloud.command.ChangeStockCommand;
 import ro.linic.cloud.command.CreateProductCommand;
@@ -27,4 +28,8 @@ public interface ProductCommandMapper {
 	@Mapping(target = "companyId", source = "product.company.id")
 	@Mapping(target = "productId", source = "product.id")
 	CreateProductCommand toCreateProductCommand(Product product);
+	
+	@Mapping(target = "companyId", source = "product.company.id")
+	@Mapping(target = "productId", source = "product.id")
+	ChangeNameCommand toChangeNameCommand(Product product);
 }
