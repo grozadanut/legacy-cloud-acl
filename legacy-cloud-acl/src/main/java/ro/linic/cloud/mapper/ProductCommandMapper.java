@@ -5,6 +5,7 @@ import org.mapstruct.Mapping;
 
 import ro.linic.cloud.command.ChangePriceCommand;
 import ro.linic.cloud.command.ChangeStockCommand;
+import ro.linic.cloud.command.CreateProductCommand;
 import ro.linic.cloud.command.DeleteProductCommand;
 import ro.linic.cloud.entity.Product;
 
@@ -22,4 +23,8 @@ public interface ProductCommandMapper {
 	@Mapping(target = "companyId", source = "product.company.id")
 	@Mapping(target = "productId", source = "product.id")
 	DeleteProductCommand toDeleteProductCommand(Product product);
+	
+	@Mapping(target = "companyId", source = "product.company.id")
+	@Mapping(target = "productId", source = "product.id")
+	CreateProductCommand toCreateProductCommand(Product product);
 }

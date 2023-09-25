@@ -1,5 +1,17 @@
-{"properties": [{
-  "name": "cloud.product.synchronizer.url",
-  "type": "java.lang.String",
-  "description": "The URL where you can access cloud-product-synchronizer api"
-}]}
+{"properties": [
+  {
+    "name": "cloud.product.synchronizer.url",
+    "type": "java.lang.String",
+    "description": "The URL where you can access cloud-product-synchronizer api"
+  },
+  {
+    "name": "notification.user.id",
+    "type": "java.lang.Integer",
+    "description": "The id of the ro.linic.cloud.entity.User in the colibri_stat_db that this application will use for notifications"
+  },
+  {
+    "name": "notification.gestiune.id",
+    "type": "java.lang.Integer",
+    "description": "The id of the ro.linic.cloud.entity.Gestiune in the colibri_stat_db that this application will use for notifications"
+  }
+]}
