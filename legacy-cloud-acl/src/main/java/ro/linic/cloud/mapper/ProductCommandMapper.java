@@ -2,6 +2,7 @@ package ro.linic.cloud.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
 
 import ro.linic.cloud.command.ChangeNameCommand;
 import ro.linic.cloud.command.ChangePriceCommand;
@@ -12,6 +13,8 @@ import ro.linic.cloud.entity.Product;
 
 @Mapper(componentModel = "spring")
 public interface ProductCommandMapper {
+	ProductCommandMapper INSTANCE = Mappers.getMapper(ProductCommandMapper.class);
+	
 	@Mapping(target = "companyId", source = "product.company.id")
     @Mapping(target = "productId", source = "product.id")
 	ChangePriceCommand toChangePriceCommand(Product product);

@@ -14,6 +14,8 @@ import ro.linic.cloud.entity.Product;
 @Component
 public class ProductDeleteRoute extends RouteBuilder {
 	
+	public static final String ID = "productDeleteRoute";
+	
 	@Override
 	public void configure() throws Exception {
 		errorHandler(new SpringTransactionErrorHandlerBuilder()
@@ -22,7 +24,7 @@ public class ProductDeleteRoute extends RouteBuilder {
     			.redeliveryDelay(60000));
     	
         from("jms:queue:sync?cacheLevelName=CACHE_CONSUMER&selector="+JMSMessageType.JMS_MESSAGE_TYPE_KEY+"='"+JMSMessageType.PRODUCT_DELETE+"'")
-        .routeId("productDeleteRoute")
+        .routeId(ID)
         .transacted()
         .unmarshal().json(JsonLibrary.Gson, Product.class)
         .convertBodyTo(DeleteProductCommand.class)

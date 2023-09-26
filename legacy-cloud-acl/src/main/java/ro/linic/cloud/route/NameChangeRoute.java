@@ -12,10 +12,12 @@ import ro.linic.cloud.entity.Product;
 @Component
 public class NameChangeRoute extends RouteBuilder {
 	
+	public static final String ID = "nameChangeRoute";
+	
 	@Override
 	public void configure() throws Exception {
         from("jms:queue:sync?cacheLevelName=CACHE_CONSUMER&selector="+JMSMessageType.JMS_MESSAGE_TYPE_KEY+"='"+JMSMessageType.NAME_CHANGE+"'")
-        .routeId("nameChangeRoute")
+        .routeId(ID)
         .transacted()
         .unmarshal().json(JsonLibrary.Gson, Product.class)
         .convertBodyTo(ChangeNameCommand.class)

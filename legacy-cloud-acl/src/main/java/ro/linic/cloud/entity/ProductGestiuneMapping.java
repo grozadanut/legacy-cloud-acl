@@ -36,5 +36,5 @@ public class ProductGestiuneMapping {
     private Gestiune gestiune;
  
     @Column(precision=12, scale=4)
-	private final BigDecimal stoc = BigDecimal.ZERO;
+	private BigDecimal stoc;
 }

@@ -14,6 +14,8 @@ import ro.linic.cloud.entity.Product;
 @Component
 public class PriceRoute extends RouteBuilder {
 
+	public static final String ID = "priceRoute";
+	
     @Override
     public void configure() throws Exception {
     	errorHandler(new SpringTransactionErrorHandlerBuilder()
@@ -22,7 +24,7 @@ public class PriceRoute extends RouteBuilder {
     			.redeliveryDelay(60000));
     	
         from("jms:queue:sync?cacheLevelName=CACHE_CONSUMER&selector="+JMSMessageType.JMS_MESSAGE_TYPE_KEY+"='"+JMSMessageType.PRICE_CHANGE+"'")
-        .routeId("priceRoute")
+        .routeId(ID)
         .transacted()
         .unmarshal().json(JsonLibrary.Gson, Product.class)
         .convertBodyTo(ChangePriceCommand.class)

@@ -1,7 +1,7 @@
 package ro.linic.cloud;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.mockito.Mockito.mock;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -12,8 +12,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.math.BigDecimal;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,20 +21,15 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import ro.linic.cloud.command.ChangePriceCommand;
-import ro.linic.cloud.entity.Company;
-import ro.linic.cloud.entity.Product;
-import ro.linic.cloud.mapper.ProductCommandMapper;
 import ro.linic.cloud.repository.ProductRepository;
 
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
-class ProductAclApplicationTests {
+class ProductAclApplicationIntegrationTest {
 
 	@Autowired private MockMvc mockMvc;
 	@Autowired private ProductRepository productRepository;
-	@Autowired private ProductCommandMapper productCommandMapper;
 
 	@BeforeEach
 	public void deleteAllBeforeTests() throws Exception {
@@ -44,26 +37,8 @@ class ProductAclApplicationTests {
 	}
 
 	@Test
-	public void shouldConvertProduct() throws Exception {
-		// given
-		final Company company = new Company();
-		company.setId(1);
-		final Product p = new Product();
-		p.setCompany(company);
-		p.setId(30);
-		p.setPricePerUom(new BigDecimal("55.20"));
-		
-		// when
-		final ChangePriceCommand command = productCommandMapper.toChangePriceCommand(p);
-		
-		// then
-		assertThat(command.getCompanyId()).isEqualTo(1);
-		assertThat(command.getProductId()).isEqualTo(30);
-		assertThat(command.getPricePerUom()).isEqualByComparingTo(new BigDecimal("55.2"));
-	}
-	
-	@Test
 	public void shouldReturnRepositoryIndex() throws Exception {
+		final ProductRepository mock = mock(ProductRepository.class);
 
 		mockMvc.perform(get("/")).andDo(print()).andExpect(status().isOk()).andExpect(
 				jsonPath("$._links.people").exists());
