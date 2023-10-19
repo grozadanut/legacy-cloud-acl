@@ -4,6 +4,8 @@ import static ro.linic.cloud.util.StringUtils.isEmpty;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -354,5 +356,15 @@ public class NumberUtils
 		
 		return pvCuTVA.subtract(lastBuyingPriceWithTva)
 			.divide(lastBuyingPriceWithTva, 4, RoundingMode.HALF_EVEN);
+	}
+	
+	/**
+	 * Returns the value in the list that is closest to specific input value.
+	 */
+	public static BigDecimal findClosest(final List<BigDecimal> list, final BigDecimal value)
+	{
+	    return list.stream()
+	            .min(Comparator.comparing(a -> value.subtract(a).abs()))
+	            .orElse(BigDecimal.ZERO);
 	}
 }

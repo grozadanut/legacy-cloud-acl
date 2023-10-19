@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -16,6 +17,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import ro.linic.cloud.embedable.Address;
+import ro.linic.cloud.embedable.Delegat;
 
 @Entity
 public class Partner implements Serializable
@@ -76,6 +79,9 @@ public class Partner implements Serializable
 	private String phone;
 	private String email;
 	
+	@Embedded private Address address;
+	@Embedded private Delegat delegat;
+	
 	@Column(columnDefinition = "text")
     private String indicatii;
 	
@@ -85,6 +91,12 @@ public class Partner implements Serializable
 	private Boolean inactiv; // inactiv la ANAF
 	private String banca;
 	private String iban;
+	@Column(nullable = true, name = "codfiscal")
+	private String codFiscal;
+	@Column(name = "platitortva")
+	private Boolean platitorTva;
+	@Column(name = "regcom")
+	private String regCom;
 	
 	@Column(columnDefinition="BOOLEAN DEFAULT true")
 	private boolean activ = true; // daca este vizibil pe UI sau nu
@@ -158,6 +170,56 @@ public class Partner implements Serializable
 	public Long getId()
 	{
 		return id;
+	}
+	
+	public Address getAddress()
+	{
+		return address;
+	}
+	
+	public void setAddress(final Address address)
+	{
+		this.address = address;
+	}
+	
+	public Delegat getDelegat()
+	{
+		return delegat;
+	}
+	
+	public void setDelegat(final Delegat delegat)
+	{
+		this.delegat = delegat;
+	}
+	
+	public String getCodFiscal()
+	{
+		return codFiscal;
+	}
+	
+	public void setCodFiscal(final String codFiscal)
+	{
+		this.codFiscal = codFiscal;
+	}
+	
+	public Boolean getPlatitorTva()
+	{
+		return platitorTva;
+	}
+	
+	public void setPlatitorTva(final Boolean platitorTva)
+	{
+		this.platitorTva = platitorTva;
+	}
+	
+	public String getRegCom()
+	{
+		return regCom;
+	}
+	
+	public void setRegCom(final String regCom)
+	{
+		this.regCom = regCom;
 	}
 	
 	public boolean isActiv()

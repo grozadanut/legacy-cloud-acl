@@ -216,6 +216,11 @@ public abstract class Document implements Serializable
 	{
 		this.dataDoc = dataDoc;
 	}
+	
+	public void setId(final Long id)
+	{
+		this.id = id;
+	}
 
 	public Long getId()
 	{

@@ -3,12 +3,16 @@ package ro.linic.cloud.entity;
 import static ro.linic.cloud.util.NumberUtils.add;
 import static ro.linic.cloud.util.NumberUtils.divide;
 import static ro.linic.cloud.util.NumberUtils.equal;
+import static ro.linic.cloud.util.NumberUtils.findClosest;
+import static ro.linic.cloud.util.NumberUtils.subtract;
 import static ro.linic.cloud.util.PresentationUtils.safeString;
+import static ro.linic.cloud.util.StringUtils.isEmpty;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import jakarta.persistence.Column;
@@ -49,6 +53,8 @@ public class Operatiune implements Serializable
 	public static final String COMPANY_FIELD = "company";
 	public static final String COTA_TVA_FIELD = "cotaTva";
 	
+	public static List<BigDecimal> VAT_RATES_RO = List.of(new BigDecimal("0.19"), new BigDecimal("0.09"), new BigDecimal("0.05"), new BigDecimal("0"));
+
 	public enum TipOp
 	{
 		INTRARE, IESIRE;
@@ -232,6 +238,29 @@ public class Operatiune implements Serializable
 		this.uom = uom;
 	}
 	
+	public String getUomInternational()
+	{
+		if (isEmpty(uom))
+			return "C62"; //C62=unitate
+		
+		if (uom.trim().equalsIgnoreCase("BUC"))
+			return "C62"; //C62=unitate
+		if (uom.trim().equalsIgnoreCase("KG"))
+			return "KGM"; //KGM=kilogram
+		if (uom.trim().equalsIgnoreCase("ML") || uom.trim().equalsIgnoreCase("M"))
+			return "LM"; //LM=metru liniar
+		if (uom.trim().equalsIgnoreCase("MP") || uom.trim().equalsIgnoreCase("M2"))
+			return "MTK"; //MTK=metru patrat
+		if (uom.trim().equalsIgnoreCase("KM"))
+			return "KMT"; //KMT=kilometru
+		if (uom.trim().equalsIgnoreCase("PER") || uom.trim().equalsIgnoreCase("SET"))
+			return "SET"; //SET=set
+		if (uom.trim().equalsIgnoreCase("PLACA"))
+			return "XPG"; //XPG=placa
+		
+		return "C62"; //C62=unitate
+	}
+	
 	public boolean isShouldVerify()
 	{
 		return shouldVerify;
@@ -280,6 +309,14 @@ public class Operatiune implements Serializable
 	public void setValoareAchizitieTVA(final BigDecimal valoareAchizitieTVA)
 	{
 		this.valoareAchizitieTVA = valoareAchizitieTVA;
+	}
+	
+	public BigDecimal getPretVanzareUnitarFaraTVA()
+	{
+		final BigDecimal tvaPercent = getTvaPercentCalculated();
+    	final BigDecimal tvaExtractDivisor = add(tvaPercent, BigDecimal.ONE);
+    	final BigDecimal tvaUnitar = AccountingDocument.extractTvaAmount(getPretVanzareUnitarCuTVA(), tvaExtractDivisor);
+    	return subtract(getPretVanzareUnitarCuTVA(), tvaUnitar);
 	}
 
 	public BigDecimal getPretVanzareUnitarCuTVA()
@@ -397,11 +434,11 @@ public class Operatiune implements Serializable
 	 * IMPORTANT: as the VAT is calculated based on sale value, this will NOT work for ops
 	 * that only have acquisition value(eg.: materie prima)
 	 */
-	public BigDecimal tvaPercentCalculated()
+	public BigDecimal getTvaPercentCalculated()
 	{
 		if (equal(getValoareVanzareFaraTVA(), BigDecimal.ZERO))
 			return BigDecimal.ZERO;
-		return divide(getValoareVanzareTVA(), getValoareVanzareFaraTVA(), 12, RoundingMode.HALF_EVEN);
+		return findClosest(VAT_RATES_RO, divide(getValoareVanzareTVA(), getValoareVanzareFaraTVA(), 2, RoundingMode.HALF_EVEN).abs());
 	}
 	
 	@Override

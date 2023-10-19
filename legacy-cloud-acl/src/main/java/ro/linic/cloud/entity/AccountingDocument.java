@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -173,6 +174,12 @@ public class AccountingDocument extends Document
 	 */
 	@Column(name = "nrreceptie")
 	private String nrReceptie;
+	
+	@OneToMany(mappedBy = "paid", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+	private Set<AccountingDocumentMapping> paidBy = new HashSet<>();
+
+	@OneToMany(mappedBy = "pays", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+	private Set<AccountingDocumentMapping> paidDocs = new HashSet<>();
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "accDoc", cascade = CascadeType.ALL)
 	private Set<Operatiune> operatiuni = new HashSet<>();
@@ -380,6 +387,26 @@ public class AccountingDocument extends Document
 		return isEmpty(address) ? null : address;
 	}
 	
+	public Set<AccountingDocumentMapping> getPaidBy()
+	{
+		return paidBy;
+	}
+	
+	public void setPaidBy(final Set<AccountingDocumentMapping> paidBy)
+	{
+		this.paidBy = paidBy;
+	}
+	
+	public Set<AccountingDocumentMapping> getPaidDocs()
+	{
+		return paidDocs;
+	}
+	
+	public void setPaidDocs(final Set<AccountingDocumentMapping> paidDocs)
+	{
+		this.paidDocs = paidDocs;
+	}
+	
 	public Set<Operatiune> getOperatiuni()
 	{
 		return operatiuni;
@@ -419,7 +446,7 @@ public class AccountingDocument extends Document
 	 * In case we have operations, we don't use the total field;
 	 * We calculate the total by adding the sum of all the operations
 	 */
-	private BigDecimal getVanzareTotalFaraTva()
+	public BigDecimal getVanzareTotalFaraTva()
 	{
 		return getOperatiuni().stream()
 				.map(Operatiune::getValoareVanzareFaraTVA)
@@ -567,6 +594,47 @@ public class AccountingDocument extends Document
 			return add(getAchizitieTotalFaraTva(), getAchizitieTotalTva());
 			
 		return total;
+	}
+	
+	public BigDecimal getTotalLinked()
+	{
+		return totalLinked(o -> true);
+	}
+	
+	public BigDecimal totalLinked(final Predicate<AccountingDocumentMapping> filter)
+	{
+		switch (getTipDoc())
+		{
+		case CUMPARARE:
+		case VANZARE:
+			return getPaidBy().stream()
+					.filter(filter)
+					.map(AccountingDocumentMapping::getTotal)
+					.reduce(BigDecimal::add)
+					.orElse(BigDecimal.ZERO);
+
+		case PLATA:
+		case INCASARE:
+			return getPaidDocs().stream()
+					.filter(filter)
+					.map(AccountingDocumentMapping::getTotal)
+					.reduce(BigDecimal::add)
+					.orElse(BigDecimal.ZERO);
+
+		default:
+			throw new UnsupportedOperationException(
+					"Tip doc " + getTipDoc() + " not supported for calculating total unlinked!");
+		}
+	}
+	
+	public BigDecimal getTotalUnlinked()
+	{
+		return totalUnlinked(o -> true);
+	}
+	
+	public BigDecimal totalUnlinked(final Predicate<AccountingDocumentMapping> filter)
+	{
+		return getTotal().subtract(totalLinked(filter));
 	}
 
 	private boolean isCumparareBonCasa()
