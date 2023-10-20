@@ -3,6 +3,7 @@ package ro.linic.cloud.mapper;
 import static ro.linic.cloud.util.PresentationUtils.safeString;
 
 import java.math.BigDecimal;
+import java.text.MessageFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -25,6 +26,7 @@ import ro.linic.cloud.pojo.InvoiceLine;
 import ro.linic.cloud.pojo.TaxCategory;
 import ro.linic.cloud.pojo.TaxSubtotal;
 import ro.linic.cloud.util.AddressUtils;
+import ro.linic.cloud.util.LocalDateUtils;
 
 @Mapper(componentModel = "spring")
 public interface InvoiceMapper {
@@ -34,8 +36,9 @@ public interface InvoiceMapper {
 	@Mapping(target = "invoiceNumber", source = ".", qualifiedByName = "getInvoiceNumber")
 	@Mapping(target = "issueDate", source = "invOld.accDoc.dataDoc")
 	@Mapping(target = "dueDate", source = "invOld.accDoc.scadenta")
-	@Mapping(target = "accountingSupplier.vatId", source = "invOld.firmaCui")
+	@Mapping(target = "accountingSupplier.taxId", source = "invOld.firmaCui")
 	@Mapping(target = "accountingSupplier.registrationName", source = "invOld.firmaName")
+	@Mapping(target = "accountingSupplier.registrationId", source = "invOld.firmaRegCom")
 	@Mapping(target = "accountingSupplier.companyLegalForm", source = "invOld.firmaCapSocial", qualifiedByName = "displayCapSocial")
 	@Mapping(target = "accountingSupplier.postalAddress.country", constant = "RO")
 	@Mapping(target = "accountingSupplier.postalAddress.countrySubentity", source = "invOld.firmaBillingAddressCodJudet")
@@ -44,16 +47,18 @@ public interface InvoiceMapper {
 	@Mapping(target = "accountingSupplier.contactName", source = "invOld.accDoc.operator.name")
 	@Mapping(target = "accountingSupplier.telephone", source = "invOld.firmaPhone")
 	@Mapping(target = "accountingSupplier.electronicMail", source = "invOld.firmaEmail")
-	@Mapping(target = "accountingCustomer.vatId", source = "invOld.accDoc.partner.codFiscal")
+	@Mapping(target = "accountingCustomer.taxId", source = "invOld.accDoc.partner.codFiscal")
 	@Mapping(target = "accountingCustomer.registrationName", source = "invOld.accDoc.partner.name")
+	@Mapping(target = "accountingCustomer.registrationId", source = "invOld.accDoc.partner.regCom")
 	@Mapping(target = "accountingCustomer.postalAddress", source = "invOld.accDoc.partner.address", qualifiedByName = "extractAddress")
 	@Mapping(target = "accountingCustomer.contactName", source = "invOld.accDoc.partner.delegat.name")
 	@Mapping(target = "accountingCustomer.telephone", source = "invOld.accDoc.partner.phone")
 	@Mapping(target = "accountingCustomer.electronicMail", source = "invOld.accDoc.partner.email")
 	@Mapping(target = "documentCurrencyCode", constant = "RON")
 	@Mapping(target = "paymentMeansCode", constant = "30")
-	@Mapping(target = "paymentMeansId", source = "invOld.firmaIban")
-	@Mapping(target = "paymentMeansName", source = "invOld.firmaName")
+	@Mapping(target = "paymentId", source = "invOld.accDoc", qualifiedByName = "mapPaymentId")
+	@Mapping(target = "payeeFinancialAccount.id", source = "invOld.firmaIban")
+	@Mapping(target = "payeeFinancialAccount.name", source = "invOld.firmaName")
 	@Mapping(target = "taxCurrencyCode", constant = "RON")
 	@Mapping(target = "taxAmount", source = "invOld.accDoc.totalTva")
 	@Mapping(target = "taxSubtotals", source = "invOld.accDoc", qualifiedByName = "getTaxSubtotals")
@@ -69,7 +74,8 @@ public interface InvoiceMapper {
 	@Mapping(target = "note", ignore = true)
 	@Mapping(target = "payableRoundingAmount", ignore = true)
 	@Mapping(target = "payeeParty", ignore = true)
-	@Mapping(target = "paymentMeansFinancialInstitutionBranch", ignore = true)
+	@Mapping(target = "payeeFinancialAccount.financialInstitutionBranch", ignore = true)
+	@Mapping(target = "payeeFinancialAccount.currency", ignore = true)
 	@Mapping(target = "accountingSupplier.businessName", ignore = true)
 	@Mapping(target = "accountingSupplier.postalAddress.postalZone", ignore = true)
 	@Mapping(target = "accountingSupplier.postalAddress.secondaryLine", ignore = true)
@@ -144,6 +150,14 @@ public interface InvoiceMapper {
 	@Named("displayCapSocial")
 	default String displayCapSocial(final String firmaCapSocial) {
         return "Capital social "+firmaCapSocial;
+    }
+	
+	@Named("mapPaymentId")
+	default String mapPaymentId(final AccountingDocument accDoc) {
+        return MessageFormat.format("FF_{0}/{1}",
+        		safeString(accDoc, AccountingDocument::getNrDoc),
+        		safeString(accDoc, AccountingDocument::getDataDoc,
+        				dataDoc -> LocalDateUtils.displayLocalDateTime(dataDoc, LocalDateUtils.DATE_FORMATTER)));
     }
 	
 	default Instant map(final LocalDateTime value) {

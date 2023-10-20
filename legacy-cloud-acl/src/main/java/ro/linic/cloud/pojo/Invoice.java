@@ -41,25 +41,18 @@ public class Invoice {
 	 */
 	private String paymentMeansCode;
 	/**
-	 * Payment account identifier
-	 * A unique identifier of the financial payment account, at a payment service provider, to which payment should be made. 
-	 * Such as IBAN or BBAN.
-	 * Example value: NO99991122222
+	 * Remittance information
+	 * A textual value used to establish a link between the payment and the Invoice, issued by the Seller. 
+	 * Used for creditor's critical reconciliation information. This information element helps the Seller 
+	 * to assign an incoming payment to the relevant payment process.
+	 * Example value: 432948234234234
 	 */
-	private String paymentMeansId;
+	private String paymentId;
 	/**
-	 * Payment account name
-	 * The name of the payment account, at a payment service provider, to which payment should be made.
-	 * Example value: Payment Account
+	 * CREDIT TRANSFER 
+	 * A group of business terms to specify credit transfer payments. Alias Bank Account.
 	 */
-	private String paymentMeansName;
-	/**
-	 * Payment service provider identifier
-	 * An identifier for the payment service provider where a payment account is located. 
-	 * Such as a BIC or a national clearing code where required. No identification scheme Identifier to be used.
-	 * Example value: 9999
-	 */
-	private String paymentMeansFinancialInstitutionBranch;
+	private FinancialAccount payeeFinancialAccount;
 	
 	/**
 	 *  VAT accounting currency code

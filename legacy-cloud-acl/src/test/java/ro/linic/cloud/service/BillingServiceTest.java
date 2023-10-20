@@ -74,6 +74,7 @@ public class BillingServiceTest {
 		customerAddress.setOras("Bihor Chet Principala");
 		customer.setAddress(customerAddress);
 		customer.setCodFiscal("12345678");
+		customer.setRegCom("J40/1251/2023");;
 		final Delegat delegat = new Delegat();
 		delegat.setName("Client");
 		customer.setDelegat(delegat);
@@ -111,9 +112,11 @@ public class BillingServiceTest {
 		assertThat(invoice.getPayableAmount()).isEqualByComparingTo(new BigDecimal("3522"));
 		assertThat(invoice.getPayableRoundingAmount()).isNull();
 		assertThat(invoice.getPaymentMeansCode()).isEqualTo("30");
-		assertThat(invoice.getPaymentMeansFinancialInstitutionBranch()).isNull();
-		assertThat(invoice.getPaymentMeansId()).isEqualTo("RO48BTRL00501202K65277XX-RON");
-		assertThat(invoice.getPaymentMeansName()).isEqualTo("SC LINIC SRL");
+		assertThat(invoice.getPaymentId()).isEqualTo("FF_101/2023-10-17");
+		assertThat(invoice.getPayeeFinancialAccount().getFinancialInstitutionBranch()).isNull();
+		assertThat(invoice.getPayeeFinancialAccount().getCurrency()).isNull();
+		assertThat(invoice.getPayeeFinancialAccount().getId()).isEqualTo("RO48BTRL00501202K65277XX-RON");
+		assertThat(invoice.getPayeeFinancialAccount().getName()).isEqualTo("SC LINIC SRL");
 		assertThat(invoice.getPrepaidAmount()).isEqualByComparingTo(new BigDecimal("1000"));
 		assertThat(invoice.getTaxAmount()).isEqualByComparingTo(new BigDecimal("722"));
 		assertThat(invoice.getTaxCurrencyCode()).isEqualTo("RON");
@@ -129,7 +132,6 @@ public class BillingServiceTest {
 		assertThat(invoice.getPayeeParty()).isNull();
 		
 		assertThat(invoice.getAccountingSupplier().getBusinessName()).isNull();
-		assertThat(invoice.getAccountingSupplier().getCompanyLegalForm()).isEqualTo("Capital social 100,000.00 RON");
 		assertThat(invoice.getAccountingSupplier().getContactName()).isEqualTo("Groza Danut");
 		assertThat(invoice.getAccountingSupplier().getElectronicMail()).isEqualTo("colibridepot@gmail.com, sclinicsrl@gmail.com");
 		assertThat(invoice.getAccountingSupplier().getPostalAddress().getCity()).isEqualTo("MARGINE");
@@ -138,11 +140,12 @@ public class BillingServiceTest {
 		assertThat(invoice.getAccountingSupplier().getPostalAddress().getPostalZone()).isNullOrEmpty();
 		assertThat(invoice.getAccountingSupplier().getPostalAddress().getPrimaryLine()).isEqualTo("Str Principala nr 218A");
 		assertThat(invoice.getAccountingSupplier().getRegistrationName()).isEqualTo("SC LINIC SRL");
-		assertThat(invoice.getAccountingSupplier().getVatId()).isEqualTo("RO14998343");
+		assertThat(invoice.getAccountingSupplier().getRegistrationId()).isEqualTo("J05/1111/2002");
+		assertThat(invoice.getAccountingSupplier().getCompanyLegalForm()).isEqualTo("Capital social 100,000.00 RON");
+		assertThat(invoice.getAccountingSupplier().getTaxId()).isEqualTo("RO14998343");
 		assertThat(invoice.getAccountingSupplier().getTelephone()).isEqualTo("Colibri - 0787577227, Linic - 0259362437");
 		
 		assertThat(invoice.getAccountingCustomer().getBusinessName()).isNull();
-		assertThat(invoice.getAccountingCustomer().getCompanyLegalForm()).isNull();
 		assertThat(invoice.getAccountingCustomer().getContactName()).isEqualTo("Client");
 		assertThat(invoice.getAccountingCustomer().getElectronicMail()).isEqualTo("client@yahoo.com");
 		assertThat(invoice.getAccountingCustomer().getPostalAddress().getCity()).isEqualTo("Chet");
@@ -151,8 +154,10 @@ public class BillingServiceTest {
 		assertThat(invoice.getAccountingCustomer().getPostalAddress().getPostalZone()).isNullOrEmpty();
 		assertThat(invoice.getAccountingCustomer().getPostalAddress().getPrimaryLine()).isEqualTo("Principala");
 		assertThat(invoice.getAccountingCustomer().getRegistrationName()).isEqualTo("CLIENT INC RO");
+		assertThat(invoice.getAccountingCustomer().getRegistrationId()).isEqualTo("J40/1251/2023");
+		assertThat(invoice.getAccountingCustomer().getCompanyLegalForm()).isNull();
 		assertThat(invoice.getAccountingCustomer().getTelephone()).isEqualTo("0745613215");
-		assertThat(invoice.getAccountingCustomer().getVatId()).isEqualTo("12345678");
+		assertThat(invoice.getAccountingCustomer().getTaxId()).isEqualTo("12345678");
 		
 		assertThat(invoice.getLines()).hasSize(1);
 		assertThat(invoice.getLines().get(0).getAllowanceCharges()).isNullOrEmpty();

@@ -9,6 +9,7 @@ public class InvoiceOldDto {
 	final private String seriaFactura;
 	final private String firmaName;
 	final private String firmaCui;
+	final private String firmaRegCom;
 	final private String firmaCapSocial;
 	final private String firmaBillingAddressStreet;
 	final private String firmaBillingAddressCity;

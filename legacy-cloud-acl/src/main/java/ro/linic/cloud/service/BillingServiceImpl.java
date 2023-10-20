@@ -34,6 +34,7 @@ public class BillingServiceImpl implements BillingService {
 		final String seriaFactura = findOrDefault(props, PersistedProp.SERIA_FACTURA_KEY, PersistedProp.SERIA_FACTURA_DEFAULT);
 		final String firmaName = findOrDefault(props, PersistedProp.FIRMA_NAME_KEY, PersistedProp.FIRMA_NAME_DEFAULT_VALUE);
 		final String firmaCui = findOrDefault(props, PersistedProp.FIRMA_CUI_KEY, PersistedProp.FIRMA_CUI_DEFAULT_VALUE);
+		final String firmaRegCom = findOrDefault(props, PersistedProp.FIRMA_REG_COM_KEY, PersistedProp.FIRMA_REG_COM_DEFAULT_VALUE);
 		final String firmaCapSocial = findOrDefault(props, PersistedProp.FIRMA_CAP_SOCIAL_KEY, PersistedProp.FIRMA_CAP_SOCIAL_DEFAULT_VALUE);
 		final String firmaPhone = findOrDefault(props, PersistedProp.FIRMA_PHONE_KEY, PersistedProp.FIRMA_PHONE_DEFAULT_VALUE);
 		final String firmaEmail = findOrDefault(props, PersistedProp.FIRMA_EMAIL_KEY, PersistedProp.FIRMA_EMAIL_DEFAULT_VALUE);
@@ -43,8 +44,8 @@ public class BillingServiceImpl implements BillingService {
 		final String firmaBillingAddressCity = findOrDefault(props, PersistedProp.FIRMA_BILLING_CITY_KEY, PersistedProp.FIRMA_BILLING_CITY_DEFAULT_VALUE);
 		final String firmaBillingAddressCodJudet = findOrDefault(props, PersistedProp.FIRMA_BILLING_COD_JUDET_KEY, PersistedProp.FIRMA_BILLING_COD_JUDET_DEFAULT_VALUE);
 		
-		final InvoiceOldDto invOld = new InvoiceOldDto(accDoc, seriaFactura, firmaName, firmaCui, firmaCapSocial, firmaBillingAddressStreet,
-				firmaBillingAddressCity, firmaBillingAddressCodJudet, firmaPhone, firmaEmail, firmaIban);
+		final InvoiceOldDto invOld = new InvoiceOldDto(accDoc, seriaFactura, firmaName, firmaCui, firmaRegCom, firmaCapSocial,
+				firmaBillingAddressStreet, firmaBillingAddressCity, firmaBillingAddressCodJudet, firmaPhone, firmaEmail, firmaIban);
 		
 		return billingMapper.toInvoice(invOld);
 	}
