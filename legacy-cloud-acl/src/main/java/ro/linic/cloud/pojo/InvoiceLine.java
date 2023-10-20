@@ -77,6 +77,13 @@ public class InvoiceLine {
 	private BigDecimal price;
 	
 	/**
+	 * Item price base quantity
+	 * The number of item units to which the price applies.
+	 * Example value: 1
+	 */
+	private BigDecimal baseQuantity;
+	
+	/**
 	 * INVOICE LINE ALLOWANCES OR CHARGES
 	 * A group of business terms providing information about allowances or charges applicable to the individual Invoice line.
 	 */

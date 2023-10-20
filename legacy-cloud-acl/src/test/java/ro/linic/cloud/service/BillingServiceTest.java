@@ -171,6 +171,7 @@ public class BillingServiceTest {
 		assertThat(invoice.getLines().get(0).getName()).isEqualTo("MATERIALE 40KG");
 		assertThat(invoice.getLines().get(0).getNote()).isNull();
 		assertThat(invoice.getLines().get(0).getPrice()).isEqualByComparingTo(new BigDecimal("38"));
+		assertThat(invoice.getLines().get(0).getBaseQuantity()).isEqualByComparingTo(new BigDecimal("1"));
 		assertThat(invoice.getLines().get(0).getQuantity()).isEqualByComparingTo(new BigDecimal("100"));
 		assertThat(invoice.getLines().get(0).getSellersItemIdentification()).isEqualTo("59");
 		assertThat(invoice.getLines().get(0).getTaxAmount()).isEqualByComparingTo(new BigDecimal("722"));

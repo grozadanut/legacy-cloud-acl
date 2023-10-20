@@ -88,6 +88,7 @@ public interface InvoiceMapper {
 	@Mapping(target = "uom", source = "op.uomInternational")
 	@Mapping(target = "classifiedTaxCategory", source = "op")
 	@Mapping(target = "price", source = "op.pretVanzareUnitarFaraTVA")
+	@Mapping(target = "baseQuantity", constant = "1")
 	@Mapping(target = "lineExtensionAmount", source = "op.valoareVanzareFaraTVA")
 	@Mapping(target = "taxAmount", source = "op.valoareVanzareTVA")
 	@Mapping(target = "allowanceCharges", ignore = true)
