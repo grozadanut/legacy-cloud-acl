@@ -19,7 +19,7 @@ public class BillingServiceImpl implements BillingService {
 	
 	@Autowired private PersistedPropRepository persistedPropRepo;
 	@Autowired private AccountingDocumentRepository accDocRepo;
-	@Autowired private InvoiceMapper billingMapper;
+	private final InvoiceMapper billingMapper = InvoiceMapper.INSTANCE;
 	
 	@Override
 	public Invoice getInvoice(final Long invoiceId) {

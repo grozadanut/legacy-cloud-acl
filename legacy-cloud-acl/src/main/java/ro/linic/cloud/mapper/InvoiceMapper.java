@@ -28,7 +28,7 @@ import ro.linic.cloud.pojo.TaxSubtotal;
 import ro.linic.cloud.util.AddressUtils;
 import ro.linic.cloud.util.LocalDateUtils;
 
-@Mapper(componentModel = "spring")
+@Mapper
 public interface InvoiceMapper {
 	InvoiceMapper INSTANCE = Mappers.getMapper(InvoiceMapper.class);
 	

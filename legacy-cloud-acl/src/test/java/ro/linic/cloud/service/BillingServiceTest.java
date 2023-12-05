@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import ro.linic.cloud.embedable.Address;
@@ -27,7 +26,6 @@ import ro.linic.cloud.entity.Gestiune;
 import ro.linic.cloud.entity.Operatiune;
 import ro.linic.cloud.entity.Partner;
 import ro.linic.cloud.entity.User;
-import ro.linic.cloud.mapper.InvoiceMapper;
 import ro.linic.cloud.pojo.Invoice;
 import ro.linic.cloud.repository.AccountingDocumentRepository;
 import ro.linic.cloud.repository.PersistedPropRepository;
@@ -37,7 +35,6 @@ public class BillingServiceTest {
 
 	@Mock private PersistedPropRepository persistedPropRepo;
 	@Mock private AccountingDocumentRepository accDocRepo;
-	@Spy private final InvoiceMapper billingMapper = InvoiceMapper.INSTANCE;
 	@InjectMocks private BillingServiceImpl billingService;
 	
 	@Test

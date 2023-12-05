@@ -14,7 +14,7 @@ import jakarta.persistence.Table;
 import ro.linic.cloud.embedable.AccountingDocumentMappingId;
 
 @Entity
-@Table
+@Table(name = "accountingdocumentmapping")
 public class AccountingDocumentMapping implements Serializable
 {
 	private static final long serialVersionUID = 1L;
