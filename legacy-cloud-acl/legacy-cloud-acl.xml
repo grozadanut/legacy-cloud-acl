@@ -1,0 +1,9 @@
+<service>
+    <id>legacy-cloud-acl</id>
+    <name>Legacy Cloud ACL</name>
+    <description>Anti-corruption layer between Linic Platform and Linic Cloud to perform data transformations.</description>
+    <env name="LEGACY_CLOUD_ACL_HOME" value="%BASE%"/>
+    <executable>java</executable>
+    <arguments>-Xmx256m -jar "%BASE%\legacy-cloud-acl.jar"</arguments>
+    <logmode>rotate</logmode>
+</service>

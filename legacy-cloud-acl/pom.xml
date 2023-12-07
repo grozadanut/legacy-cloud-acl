@@ -167,7 +167,47 @@
 					</annotationProcessorPaths>
 				</configuration>
 			</plugin>
+			<plugin>
+	            <groupId>org.apache.maven.plugins</groupId>
+	            <artifactId>maven-antrun-plugin</artifactId>
+	            <executions>
+	                <execution>
+	                    <id>scp-to-remote</id>
+	                    <phase>install</phase>
+	                    <goals>
+	                        <goal>run</goal>
+	                    </goals>
+	                    <configuration>
+	                        <target>
+	                            <scp localFile="${project.build.directory}/${project.build.finalName}.jar"
+	                                 remoteToFile="${rserver.user}@colibriserver.go.ro:/mnt/D/repo/legacy-cloud-acl/legacy-cloud-acl.jar"
+	                                 password="${rserver.pass}" trust="true">
+	                            </scp>
+	                            <scp localFile="${project.basedir}/legacy-cloud-acl.exe"
+	                                 remoteToFile="${rserver.user}@colibriserver.go.ro:/mnt/D/repo/legacy-cloud-acl"
+	                                 password="${rserver.pass}" trust="true">
+	                            </scp>
+	                            <scp localFile="${project.basedir}/legacy-cloud-acl.xml"
+	                                 remoteToFile="${rserver.user}@colibriserver.go.ro:/mnt/D/repo/legacy-cloud-acl"
+	                                 password="${rserver.pass}" trust="true">
+	                            </scp>
+	                        </target>
+	                    </configuration>
+	                </execution>
+	            </executions>
+	            <dependencies>
+			        <dependency>
+			          <groupId>com.jcraft</groupId>
+			          <artifactId>jsch</artifactId>
+			          <version>0.1.55</version>
+			        </dependency>
+			        <dependency>
+			          <groupId>org.apache.ant</groupId>
+			          <artifactId>ant-jsch</artifactId>
+			          <version>1.10.14</version>
+			        </dependency>
+			    </dependencies>
+	        </plugin>
 		</plugins>
 	</build>
-
 </project>
