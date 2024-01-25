@@ -25,8 +25,8 @@ import ro.linic.cloud.pojo.Invoice;
 import ro.linic.cloud.pojo.InvoiceLine;
 import ro.linic.cloud.pojo.TaxCategory;
 import ro.linic.cloud.pojo.TaxSubtotal;
-import ro.linic.cloud.util.AddressUtils;
 import ro.linic.cloud.util.LocalDateUtils;
+import ro.linic.cloud.util.PresentationUtils;
 
 @Mapper
 public interface InvoiceMapper {
@@ -105,11 +105,15 @@ public interface InvoiceMapper {
 	
 	@Named("extractAddress")
 	default ro.linic.cloud.pojo.Address extractAddress(final Address address) {
+		if (address == null)
+            return null;
+		
 		final ro.linic.cloud.pojo.Address target = new ro.linic.cloud.pojo.Address();
-		target.setCountry("RO");
-		target.setCountrySubentity(safeString(address, Address::getOras, AddressUtils::extractCodJudet));
-		target.setCity(safeString(address, Address::getOras, AddressUtils::extractCity));
-		target.setPrimaryLine(safeString(address, Address::getOras, AddressUtils::extractAddressLine));
+		target.setCountry(PresentationUtils.safeString(address.getCountry(), "RO"));
+		target.setCountrySubentity(address.getJudet());
+		target.setCity(address.getOras());
+		target.setPrimaryLine(address.getStrada());
+		target.setPostalZone(address.getNr());
         return target;
     }
 	

@@ -68,7 +68,11 @@ public class BillingServiceTest {
 		customer.setName("CLIENT INC RO");
 		customer.setPhone("0745613215");
 		final Address customerAddress = new Address();
-		customerAddress.setOras("Bihor Chet Principala");
+		customerAddress.setCountry("RO");
+		customerAddress.setJudet("RO-BH");
+		customerAddress.setNr("415300");
+		customerAddress.setOras("Chet");
+		customerAddress.setStrada("Principala");
 		customer.setAddress(customerAddress);
 		customer.setCodFiscal("12345678");
 		customer.setRegCom("J40/1251/2023");;
@@ -148,7 +152,7 @@ public class BillingServiceTest {
 		assertThat(invoice.getAccountingCustomer().getPostalAddress().getCity()).isEqualTo("Chet");
 		assertThat(invoice.getAccountingCustomer().getPostalAddress().getCountry()).isEqualTo("RO");
 		assertThat(invoice.getAccountingCustomer().getPostalAddress().getCountrySubentity()).isEqualTo("RO-BH");
-		assertThat(invoice.getAccountingCustomer().getPostalAddress().getPostalZone()).isNullOrEmpty();
+		assertThat(invoice.getAccountingCustomer().getPostalAddress().getPostalZone()).isEqualTo("415300");
 		assertThat(invoice.getAccountingCustomer().getPostalAddress().getPrimaryLine()).isEqualTo("Principala");
 		assertThat(invoice.getAccountingCustomer().getRegistrationName()).isEqualTo("CLIENT INC RO");
 		assertThat(invoice.getAccountingCustomer().getRegistrationId()).isEqualTo("J40/1251/2023");
