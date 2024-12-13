@@ -156,6 +156,36 @@ public class Operatiune implements Serializable
 	public Operatiune()
 	{
 	}
+	
+	public Operatiune(final Company company, final Long id, final Gestiune gestiune, final AccountingDocument accDoc, final TipOp tipOp, final String barcode, final String name,
+			final String uom, final String categorie, final boolean rpz, final BigDecimal cantitate, final BigDecimal pretUnitarAchizitieFaraTVA,
+			final BigDecimal valoareAchizitieFaraTVA, final BigDecimal valoareAchizitieTVA, final BigDecimal pretVanzareUnitarCuTVA,
+			final BigDecimal valoareVanzareFaraTVA, final BigDecimal valoareVanzareTVA, final User operator, final LocalDateTime dataOp,
+			final String idx, final boolean shouldVerify)
+	{
+		super();
+		this.company = company;
+		this.id = id;
+		this.gestiune = gestiune;
+		this.accDoc = accDoc;
+		this.tipOp = tipOp;
+		this.barcode = barcode;
+		this.name = name;
+		this.uom = uom;
+		this.categorie = categorie;
+		this.rpz = rpz;
+		this.cantitate = cantitate;
+		this.pretUnitarAchizitieFaraTVA = pretUnitarAchizitieFaraTVA;
+		this.valoareAchizitieFaraTVA = valoareAchizitieFaraTVA;
+		this.valoareAchizitieTVA = valoareAchizitieTVA;
+		this.pretVanzareUnitarCuTVA = pretVanzareUnitarCuTVA;
+		this.valoareVanzareFaraTVA = valoareVanzareFaraTVA;
+		this.valoareVanzareTVA = valoareVanzareTVA;
+		this.operator = operator;
+		this.dataOp = dataOp;
+		this.idx = idx;
+		this.shouldVerify = shouldVerify;
+	}
 
 	public Company getCompany()
 	{
@@ -313,7 +343,7 @@ public class Operatiune implements Serializable
 	
 	public BigDecimal getPretVanzareUnitarFaraTVA()
 	{
-		final BigDecimal tvaPercent = getTvaPercentCalculated();
+		final BigDecimal tvaPercent = getVanzareTvaPercentCalculated();
     	final BigDecimal tvaExtractDivisor = add(tvaPercent, BigDecimal.ONE);
     	final BigDecimal tvaUnitar = AccountingDocument.extractTvaAmount(getPretVanzareUnitarCuTVA(), tvaExtractDivisor);
     	return subtract(getPretVanzareUnitarCuTVA(), tvaUnitar);
@@ -434,11 +464,18 @@ public class Operatiune implements Serializable
 	 * IMPORTANT: as the VAT is calculated based on sale value, this will NOT work for ops
 	 * that only have acquisition value(eg.: materie prima)
 	 */
-	public BigDecimal getTvaPercentCalculated()
+	public BigDecimal getVanzareTvaPercentCalculated()
 	{
 		if (equal(getValoareVanzareFaraTVA(), BigDecimal.ZERO))
 			return BigDecimal.ZERO;
 		return findClosest(VAT_RATES_RO, divide(getValoareVanzareTVA(), getValoareVanzareFaraTVA(), 2, RoundingMode.HALF_EVEN).abs());
+	}
+	
+	public BigDecimal getAchizitieTvaPercentCalculated()
+	{
+		if (equal(getValoareAchizitieFaraTVA(), BigDecimal.ZERO))
+			return BigDecimal.ZERO;
+		return findClosest(VAT_RATES_RO, divide(getValoareAchizitieTVA(), getValoareAchizitieFaraTVA(), 2, RoundingMode.HALF_EVEN).abs());
 	}
 	
 	@Override

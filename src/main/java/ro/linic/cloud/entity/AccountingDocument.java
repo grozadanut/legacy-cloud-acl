@@ -256,6 +256,28 @@ public class AccountingDocument extends Document
 	public AccountingDocument()
 	{
 	}
+	
+	public AccountingDocument(final Company company, final Long id, final Partner partner, final String name, final TipDoc tipDoc, final BigDecimal total,
+			final BigDecimal totalTva, final LocalDate scadenta, final LocalDateTime dataDoc, final User operator, final Gestiune gestiune,
+			final String doc, final String nrDoc, final boolean rpz, final boolean regCasa, final LocalDateTime dataReceptie,
+			final String nrReceptie,
+			final boolean inContabilitate, final boolean editable, final String indicatii, final String address,
+			final String phone)
+	{
+		super(company, id, partner, name, tipDoc, total, totalTva, scadenta, dataDoc, operator);
+		this.gestiune = gestiune;
+		this.doc = doc;
+		this.nrDoc = nrDoc;
+		this.rpz = rpz;
+		this.regCasa = regCasa;
+		this.dataReceptie = dataReceptie;
+		this.nrReceptie = nrReceptie;
+		this.inContabilitate = inContabilitate;
+		this.editable = editable;
+		this.indicatii = indicatii;
+		this.address = address;
+		this.phone = phone;
+	}
 
 	public Gestiune getGestiune()
 	{

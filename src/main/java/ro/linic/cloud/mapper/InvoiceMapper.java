@@ -98,7 +98,7 @@ public interface InvoiceMapper {
 	InvoiceLine toInvoiceLine(Operatiune op);
 	
 	@Mapping(target = "code", constant = "S")
-	@Mapping(target = "percent", source = "op.tvaPercentCalculated")
+	@Mapping(target = "percent", source = "op.vanzareTvaPercentCalculated")
 	@Mapping(target = "taxScheme", constant = "VAT")
 	@Mapping(target = "taxExemptionReason", ignore = true)
 	TaxCategory operatiuneToTaxCategory(Operatiune op);
@@ -129,7 +129,7 @@ public interface InvoiceMapper {
 			return List.of();
 		
         return accDoc.getOperatiuni_Stream()
-        		.collect(Collectors.groupingBy(Operatiune::getTvaPercentCalculated))
+        		.collect(Collectors.groupingBy(Operatiune::getVanzareTvaPercentCalculated))
         		.entrySet().stream()
         		.map(vatToOps -> 
         		{
