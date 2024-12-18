@@ -27,4 +27,5 @@ public class Livrari {
 	@JsonProperty("PretLiv") private String price;
 	@JsonProperty("ValLivFTVA") private String lineAmount;
 	@JsonProperty("ValLivTVA") private String taxAmount;
+	@JsonProperty("IndexSPV") private String indexSpv;
 }

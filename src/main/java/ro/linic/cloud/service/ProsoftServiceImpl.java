@@ -4,6 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -13,7 +15,14 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
@@ -27,6 +36,8 @@ import ro.linic.cloud.entity.AccountingDocument.DocumentTypesLoad;
 import ro.linic.cloud.entity.AccountingDocument.RPZLoad;
 import ro.linic.cloud.entity.Document.TipDoc;
 import ro.linic.cloud.mapper.ProsoftMapper;
+import ro.linic.cloud.pojo.ReportedInvoice;
+import ro.linic.cloud.pojo.ReportedInvoice.ReportState;
 
 @Service
 @Log
@@ -59,6 +70,10 @@ public class ProsoftServiceImpl implements ProsoftService {
 	}
 	
 	@Autowired private LegacyService legacyService;
+	@Autowired private RestTemplate restTemplate;
+	
+	@Value("${cloud.anaf.connector.url:http://localhost}")
+	private String anafConnectorUrl;
 	
 	@Override
 	public byte[] invoices(LocalDate from, LocalDate to) {
@@ -71,15 +86,42 @@ public class ProsoftServiceImpl implements ProsoftService {
 
 	@Override
 	public String outgInvoices_Xml(LocalDate from, LocalDate to) {
-		return toXml(legacyService.filteredDocuments(null, null, TipDoc.VANZARE, from, to, RPZLoad.DOAR_RPZ, 
+		final List<AccountingDocument> outgInvoices = legacyService.filteredDocuments(null, null, TipDoc.VANZARE, from, to, RPZLoad.DOAR_RPZ, 
 				CasaLoad.INDIFERENT, BancaLoad.INDIFERENT, null, DocumentTypesLoad.FARA_DISCOUNTURI, null, null, ContaLoad.INDIFERENT, null, null)
 				.stream()
 				.filter(AccountingDocument.class::isInstance)
 				.map(AccountingDocument.class::cast)
 				.filter(accDoc -> accDoc.getDoc().equalsIgnoreCase(AccountingDocument.FACTURA_NAME))
+				.collect(Collectors.toList());
+		
+		final Map<Long, String> reportedInvoiceIndexes = findReportedInvoicesById(outgInvoices.stream()
+					.map(AccountingDocument::getId)
+					.collect(Collectors.toSet()))
+				.stream()
+				.filter(ri -> ReportState.SENT.equals(ri.getState()))
+				.collect(Collectors.toMap(ReportedInvoice::getInvoiceId, ReportedInvoice::getUploadIndex));
+		
+		return toXml(outgInvoices.stream()
 				.flatMap(AccountingDocument::getOperatiuni_Stream)
-				.map(ProsoftMapper.INSTANCE::toOutgLine)
+				.map(op -> ProsoftMapper.INSTANCE.toOutgLine(op, reportedInvoiceIndexes.get(op.getAccDoc().getId())))
 				.collect(Collectors.toList()));
+	}
+
+	private List<ReportedInvoice> findReportedInvoicesById(final Collection<Long> ids) {
+		if (!ids.iterator().hasNext())
+			return List.of();
+		
+		final String searchUrl = anafConnectorUrl + "/report/search/findAllById";
+		final Map<String,String> params = new LinkedHashMap<String,String>();
+		params.put("ids", ids.stream().map(String::valueOf).collect(Collectors.joining(",")));
+		
+		final HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		return restTemplate.exchange(searchUrl, HttpMethod.GET,
+				new HttpEntity<String>("", headers),
+				new ParameterizedTypeReference<List<ReportedInvoice>>(){}, params)
+				.getBody();
 	}
 
 	@Override

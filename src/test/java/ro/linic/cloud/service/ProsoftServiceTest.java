@@ -6,13 +6,22 @@ import static org.mockito.Mockito.when;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
 import ro.linic.cloud.entity.AccountingDocument;
 import ro.linic.cloud.entity.AccountingDocument.BancaLoad;
@@ -25,10 +34,13 @@ import ro.linic.cloud.entity.Document.TipDoc;
 import ro.linic.cloud.entity.Gestiune;
 import ro.linic.cloud.entity.Operatiune;
 import ro.linic.cloud.entity.Partner;
+import ro.linic.cloud.pojo.ReportedInvoice;
+import ro.linic.cloud.pojo.ReportedInvoice.ReportState;
 
 @ExtendWith(MockitoExtension.class)
 public class ProsoftServiceTest {
 	@Mock private LegacyService legacyService;
+	@Mock private RestTemplate restTemplate;
 	@InjectMocks private ProsoftServiceImpl prosoftService;
 	
 	@Test
@@ -94,9 +106,24 @@ public class ProsoftServiceTest {
 		op.setCompany(company);
 		invoice1.getOperatiuni().add(op);
 		
+		final ReportedInvoice repInv = new ReportedInvoice();
+		repInv.setInvoiceId(invoice1.getId());
+		repInv.setState(ReportState.SENT);
+		repInv.setUploadIndex("111555");
+		
+		final Map<String,String> params = new LinkedHashMap<String,String>();
+		params.put("ids", invoice1.getId().toString());
+		
+		final HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		
 		when(legacyService.filteredDocuments(null, null, TipDoc.VANZARE, LocalDate.now(), LocalDate.now(), RPZLoad.DOAR_RPZ, CasaLoad.INDIFERENT,
 				BancaLoad.INDIFERENT, null, DocumentTypesLoad.FARA_DISCOUNTURI, null, null, ContaLoad.INDIFERENT, null, null))
 		.thenReturn(List.of(invoice1));
+		when(restTemplate.exchange("null/report/search/findAllById", HttpMethod.GET, 
+				new HttpEntity<String>("", headers),
+				new ParameterizedTypeReference<List<ReportedInvoice>>(){}, params))
+		.thenReturn(ResponseEntity.ok(List.of(repInv)));
 		
 		// when
 		final String outgXml = prosoftService.outgInvoices_Xml(LocalDate.now(), LocalDate.now());
@@ -125,6 +152,7 @@ public class ProsoftServiceTest {
 				    <PretLiv>45.22</PretLiv>
 				    <ValLivFTVA>3800</ValLivFTVA>
 				    <ValLivTVA>722</ValLivTVA>
+				    <IndexSPV>111555</IndexSPV>
 				  </Livrari>
 				</SetDate>
 				""");

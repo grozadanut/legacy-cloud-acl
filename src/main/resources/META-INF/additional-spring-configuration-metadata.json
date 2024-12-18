@@ -13,5 +13,10 @@
     "name": "notification.gestiune.id",
     "type": "java.lang.Integer",
     "description": "The id of the ro.linic.cloud.entity.Gestiune in the colibri_stat_db that this application will use for notifications"
+  },
+  {
+    "name": "cloud.anaf.connector.url",
+    "type": "java.lang.String",
+    "description": "The url where you can access the anaf connector service"
   }
 ]}

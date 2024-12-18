@@ -40,7 +40,8 @@ public interface ProsoftMapper {
     @Mapping(target = "price", source = "op.pretVanzareUnitarCuTVA")
     @Mapping(target = "lineAmount", source = "op.valoareVanzareFaraTVA")
     @Mapping(target = "taxAmount", source = "op.valoareVanzareTVA")
-    Livrari toOutgLine(Operatiune op);
+	@Mapping(target = "indexSpv", source = "indexSpv")
+    Livrari toOutgLine(Operatiune op, String indexSpv);
 	
 	@Mapping(target = "type", constant = "GESTIUNE-IN")
     @Mapping(target = "company", source = "op.company.name")
