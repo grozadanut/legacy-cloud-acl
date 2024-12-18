@@ -3,6 +3,7 @@ package ro.linic.cloud.service;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -22,7 +23,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
@@ -112,15 +115,22 @@ public class ProsoftServiceImpl implements ProsoftService {
 			return List.of();
 		
 		final String searchUrl = anafConnectorUrl + "/report/search/findAllById";
-		final Map<String,String> params = new LinkedHashMap<String,String>();
+		final Map<String, String> params = new LinkedHashMap<String,String>();
 		params.put("ids", ids.stream().map(String::valueOf).collect(Collectors.joining(",")));
+		
+		final LinkedMultiValueMap<String, String> queryParams = params.entrySet().stream()
+	            .collect(Collectors.toMap(Map.Entry::getKey, e -> List.of(String.valueOf(e.getValue())),
+	                    (a, b) -> a, LinkedMultiValueMap::new));
+		
+		final URI uri = UriComponentsBuilder.fromHttpUrl(searchUrl)
+				.queryParams(queryParams).encode().build().toUri();
 		
 		final HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 
-		return restTemplate.exchange(searchUrl, HttpMethod.GET,
+		return restTemplate.exchange(uri, HttpMethod.GET,
 				new HttpEntity<String>("", headers),
-				new ParameterizedTypeReference<List<ReportedInvoice>>(){}, params)
+				new ParameterizedTypeReference<List<ReportedInvoice>>(){})
 				.getBody();
 	}
 

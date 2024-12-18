@@ -3,7 +3,9 @@ package ro.linic.cloud.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
@@ -22,6 +24,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import ro.linic.cloud.entity.AccountingDocument;
 import ro.linic.cloud.entity.AccountingDocument.BancaLoad;
@@ -62,7 +65,7 @@ public class ProsoftServiceTest {
 	
 	@SuppressWarnings("deprecation")
 	@Test
-	public void shouldReturnXml_whenOutgInvoicesPresent() {
+	public void shouldReturnXml_whenOutgInvoicesPresent() throws ClassNotFoundException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
 		// given
 		final AccountingDocument invoice1 = new AccountingDocument();
 		final Company company = new Company();
@@ -117,12 +120,21 @@ public class ProsoftServiceTest {
 		final HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		
+		final Class<?> mockServiceClass = Class.forName("ro.linic.cloud.service.ProsoftServiceImpl");
+		final Field field = mockServiceClass.getDeclaredField("anafConnectorUrl");
+	    field.setAccessible(true);
+	    field.set(prosoftService, "http://localhost:8080");
+		
 		when(legacyService.filteredDocuments(null, null, TipDoc.VANZARE, LocalDate.now(), LocalDate.now(), RPZLoad.DOAR_RPZ, CasaLoad.INDIFERENT,
 				BancaLoad.INDIFERENT, null, DocumentTypesLoad.FARA_DISCOUNTURI, null, null, ContaLoad.INDIFERENT, null, null))
 		.thenReturn(List.of(invoice1));
-		when(restTemplate.exchange("null/report/search/findAllById", HttpMethod.GET, 
+		
+		final URI uri = UriComponentsBuilder.fromHttpUrl("http://localhost:8080/report/search/findAllById?ids="+invoice1.getId())
+				.build().toUri();
+		
+		when(restTemplate.exchange(uri, HttpMethod.GET, 
 				new HttpEntity<String>("", headers),
-				new ParameterizedTypeReference<List<ReportedInvoice>>(){}, params))
+				new ParameterizedTypeReference<List<ReportedInvoice>>(){}))
 		.thenReturn(ResponseEntity.ok(List.of(repInv)));
 		
 		// when
