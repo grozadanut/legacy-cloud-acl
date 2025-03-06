@@ -29,7 +29,7 @@ public class ProductCreateRoute extends RouteBuilder {
         .unmarshal().json(JsonLibrary.Gson, Product.class)
         .convertBodyTo(CreateProductCommand.class)
         .marshal().json(JsonLibrary.Gson)
-        .throttle(1).timePeriodMillis(10000)
+        .throttle(1).timePeriodMillis(500)
         .setHeader(Exchange.HTTP_METHOD, constant(HttpMethods.POST))
         .to("http:{{cloud.product.synchronizer.url}}/update/createProduct");
 	}

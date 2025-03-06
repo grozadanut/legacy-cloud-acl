@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>ro.linic.cloud</groupId>
 	<artifactId>legacy-cloud-acl</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2-SNAPSHOT</version>
 	<name>legacy-cloud-acl</name>
 	<description>Anti-corruption layer between Linic Platform and Linic Cloud to perform data transformations.</description>
 	<properties>
