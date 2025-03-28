@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>ro.linic.cloud</groupId>
 	<artifactId>legacy-cloud-acl</artifactId>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>0.0.3-SNAPSHOT</version>
 	<name>legacy-cloud-acl</name>
 	<description>Anti-corruption layer between Linic Platform and Linic Cloud to perform data transformations.</description>
 	<properties>
@@ -78,7 +78,16 @@
 		    <groupId>com.fasterxml.jackson.dataformat</groupId>
 		    <artifactId>jackson-dataformat-xml</artifactId>
 		</dependency>
-
+		<dependency>
+		    <groupId>io.sentry</groupId>
+		    <artifactId>sentry-spring-boot-starter-jakarta</artifactId>
+		    <version>8.5.0</version>
+		</dependency>
+		<dependency>
+		    <groupId>io.sentry</groupId>
+		    <artifactId>sentry-logback</artifactId>
+		    <version>8.5.0</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.postgresql</groupId>
