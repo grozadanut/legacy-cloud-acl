@@ -180,7 +180,7 @@ public class BillingServiceTest {
 	}
 	
 	@Test
-	public void whenAmountIs05AndTva01_thenTvaPercentShouldBe19() {
+	public void whenAmountIs05AndTva01_thenTvaPercentShouldBe21() {
 		// given
 		final AccountingDocument accDoc = new AccountingDocument();
 		final Company company = new Company();
@@ -211,13 +211,13 @@ public class BillingServiceTest {
 		assertThat(invoice.getTaxSubtotals().get(0).getTaxableAmount()).isEqualByComparingTo(new BigDecimal("0.5"));
 		assertThat(invoice.getTaxSubtotals().get(0).getTaxAmount()).isEqualByComparingTo(new BigDecimal("0.1"));
 		assertThat(invoice.getTaxSubtotals().get(0).getTaxCategory().getCode()).isEqualTo("S");
-		assertThat(invoice.getTaxSubtotals().get(0).getTaxCategory().getPercent()).isEqualByComparingTo(new BigDecimal("0.19"));
+		assertThat(invoice.getTaxSubtotals().get(0).getTaxCategory().getPercent()).isEqualByComparingTo(new BigDecimal("0.21"));
 		assertThat(invoice.getTaxSubtotals().get(0).getTaxCategory().getTaxExemptionReason()).isNull();
 		assertThat(invoice.getTaxSubtotals().get(0).getTaxCategory().getTaxScheme()).isEqualTo("VAT");
 		
 		assertThat(invoice.getLines()).hasSize(1);
 		assertThat(invoice.getLines().get(0).getClassifiedTaxCategory().getCode()).isEqualTo("S");
-		assertThat(invoice.getLines().get(0).getClassifiedTaxCategory().getPercent()).isEqualTo(new BigDecimal("0.19"));
+		assertThat(invoice.getLines().get(0).getClassifiedTaxCategory().getPercent()).isEqualTo(new BigDecimal("0.21"));
 		assertThat(invoice.getLines().get(0).getClassifiedTaxCategory().getTaxExemptionReason()).isNull();
 		assertThat(invoice.getLines().get(0).getClassifiedTaxCategory().getTaxScheme()).isEqualTo("VAT");
 		assertThat(invoice.getLines().get(0).getLineExtensionAmount()).isEqualByComparingTo(new BigDecimal("0.5"));
