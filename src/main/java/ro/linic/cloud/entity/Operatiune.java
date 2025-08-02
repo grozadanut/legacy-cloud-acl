@@ -53,7 +53,8 @@ public class Operatiune implements Serializable
 	public static final String COMPANY_FIELD = "company";
 	public static final String COTA_TVA_FIELD = "cotaTva";
 	
-	public static List<BigDecimal> VAT_RATES_RO = List.of(new BigDecimal("0.19"), new BigDecimal("0.09"), new BigDecimal("0.05"), new BigDecimal("0"));
+	public static List<BigDecimal> VAT_RATES_RO = List.of(new BigDecimal("0.21"), new BigDecimal("0.11"),
+			new BigDecimal("0.19"), new BigDecimal("0.09"), new BigDecimal("0.05"), new BigDecimal("0"));
 
 	public enum TipOp
 	{
